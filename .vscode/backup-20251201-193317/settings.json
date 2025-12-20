@@ -1,0 +1,14 @@
+{
+  // 保留括号/引号自动补全
+  "editor.autoClosingBrackets": "always",
+  "editor.autoClosingQuotes": "always",
+  // 关闭自动联想/提示（模拟考试环境）
+  "editor.quickSuggestions": false,
+  "editor.suggestOnTriggerCharacters": false,
+  "editor.inlineSuggest.enabled": false,
+  "editor.parameterHints.enabled": false,
+  "editor.snippetSuggestions": "none",
+  // 仍保持括号可视化，方便阅读
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": true
+}

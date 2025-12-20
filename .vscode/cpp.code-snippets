@@ -1,0 +1,31 @@
+{
+  "CP Main": {
+    "prefix": ["cp", "cp-main"],
+    "description": "Competitive programming main with fast IO",
+    "body": [
+      "#include <bits/stdc++.h>",
+      "using namespace std;",
+      "int main(){",
+      "    ios::sync_with_stdio(false);",
+      "    cin.tie(nullptr);",
+      "    $0",
+      "    return 0;",
+      "}"
+    ]
+  },
+  "Include Template": {
+    "prefix": ["inc-temp"],
+    "description": "Include common templates from workspace templates/",
+    "body": [
+      "#include \"${workspaceFolder}/templates/common.hpp\"",
+      "#include \"${workspaceFolder}/templates/fast_pow.hpp\"",
+      "#include \"${workspaceFolder}/templates/dsu.hpp\"",
+      "#include \"${workspaceFolder}/templates/fenwick.hpp\"",
+      "#include \"${workspaceFolder}/templates/segment_tree.hpp\"",
+      "#include \"${workspaceFolder}/templates/dijkstra.hpp\"",
+      "#include \"${workspaceFolder}/templates/kmp.hpp\"",
+      "#include \"${workspaceFolder}/templates/lca.hpp\"",
+      "#include \"${workspaceFolder}/templates/sieve.hpp\""
+    ]
+  }
+}

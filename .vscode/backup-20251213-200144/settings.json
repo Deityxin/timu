@@ -1,0 +1,18 @@
+{
+  "editor.autoClosingBrackets": "always",
+  "editor.autoClosingQuotes": "always",
+  "editor.quickSuggestions": {
+    "comments": "on",
+    "strings": "on",
+    "other": "on"
+  },
+  "editor.suggestOnTriggerCharacters": true,
+  "editor.inlineSuggest.enabled": true,
+  "editor.parameterHints.enabled": true,
+  "editor.snippetSuggestions": "inline",
+  "editor.hover.enabled": "on",
+  "C_Cpp.autocomplete": "Default",
+  "C_Cpp.intelliSenseEngine": "Default",
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": true
+}

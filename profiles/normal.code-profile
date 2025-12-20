@@ -1,0 +1,24 @@
+{
+  "$schema": "vscode://schemas/profile",
+  "name": "Normal Mode (Full IntelliSense)",
+  "settings": {
+    "editor.autoClosingBrackets": "always",
+    "editor.autoClosingQuotes": "always",
+    "editor.quickSuggestions": true,
+    "editor.suggestOnTriggerCharacters": true,
+    "editor.inlineSuggest.enabled": true,
+    "editor.parameterHints.enabled": true,
+    "editor.snippetSuggestions": "inline",
+    "editor.hover.enabled": true,
+    "editor.bracketPairColorization.enabled": true,
+    "editor.guides.bracketPairs": true,
+    "C_Cpp.autocomplete": "Default",
+    "C_Cpp.intelliSenseEngine": "Default"
+  },
+  "extensions": {
+    "recommendations": [
+      "ms-vscode.cpptools",
+      "ms-vscode.powershell"
+    ]
+  }
+}

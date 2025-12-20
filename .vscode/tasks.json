@@ -1,0 +1,99 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "C++: Build Current File",
+      "type": "shell",
+      "command": "g++",
+      "args": [
+        "-std=gnu++17",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-I",
+        "${workspaceFolder}",
+        "${file}",
+        "-o",
+        "${fileBasenameNoExtension}.exe"
+      ],
+      "options": {
+        "cwd": "${fileDirname}"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "C++: Run Current File",
+      "type": "shell",
+      "dependsOn": "C++: Build Current File",
+      "command": "chcp 65001 > $null; .\\${fileBasenameNoExtension}.exe",
+      "options": {
+        "cwd": "${fileDirname}"
+      }
+    },
+    {
+      "label": "切换: 考试模式",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-File",
+        "${workspaceFolder}\\scripts\\toggle-exam.ps1",
+        "-Mode",
+        "exam"
+      ],
+      "group": "none",
+      "problemMatcher": []
+    },
+    {
+      "label": "切换: 正常模式",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-File",
+        "${workspaceFolder}\\scripts\\toggle-exam.ps1",
+        "-Mode",
+        "normal"
+      ],
+      "group": "none",
+      "problemMatcher": []
+    },
+    {
+      "label": "Reload: 重载窗口",
+      "type": "shell",
+      "command": "code",
+      "args": [
+        "--command",
+        "workbench.action.reloadWindow"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "一键: 考试模式",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-File",
+        "${workspaceFolder}\\scripts\\toggle-exam.ps1",
+        "-Mode",
+        "exam",
+        "-ShowNotice"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "一键: 正常模式",
+      "type": "shell",
+      "command": "pwsh",
+      "args": [
+        "-File",
+        "${workspaceFolder}\\scripts\\toggle-exam.ps1",
+        "-Mode",
+        "normal",
+        "-ShowNotice"
+      ],
+      "problemMatcher": []
+    }
+  ]
+}

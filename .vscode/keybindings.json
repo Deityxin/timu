@@ -1,0 +1,56 @@
+[
+  {
+    // 取消 Insert 键切换覆盖模式，避免误触导致 OVR
+    "key": "insert",
+    "command": "-toggleOvertype",
+    "when": "textInputFocus"
+  },
+  {
+    // 释放内置的 参数提示 快捷键，避免与考试模式冲突
+    "key": "ctrl+shift+space",
+    "command": "-editor.action.triggerParameterHints",
+    "when": "editorTextFocus"
+  },
+  {
+    // Ctrl+Shift+Space 一键切换考试模式
+    "key": "ctrl+shift+space",
+    "command": "workbench.action.tasks.runTask",
+    "args": "一键: 考试模式",
+    "when": "true"
+  },
+  {
+    // Ctrl+Alt+1 一键切换正常模式（避免与内置冲突）
+    "key": "ctrl+alt+1",
+    "command": "workbench.action.tasks.runTask",
+    "args": "一键: 正常模式",
+    "when": "true"
+  },
+  {
+    // 备用单击组合：Ctrl+Alt+E 切换考试模式
+    "key": "ctrl+alt+e",
+    "command": "workbench.action.tasks.runTask",
+    "args": "一键: 考试模式",
+    "when": "true"
+  },
+  {
+    // 备用单击组合：Ctrl+Alt+N 切换正常模式
+    "key": "ctrl+alt+n",
+    "command": "workbench.action.tasks.runTask",
+    "args": "一键: 正常模式",
+    "when": "true"
+  },
+  {
+    // 备用：按键序列，几乎无冲突（考试）
+    "key": "ctrl+k ctrl+e",
+    "command": "workbench.action.tasks.runTask",
+    "args": "一键: 考试模式",
+    "when": "true"
+  },
+  {
+    // 备用：按键序列，几乎无冲突（正常）
+    "key": "ctrl+k ctrl+n",
+    "command": "workbench.action.tasks.runTask",
+    "args": "一键: 正常模式",
+    "when": "true"
+  }
+]

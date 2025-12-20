@@ -1,0 +1,27 @@
+{
+  "editor.autoClosingBrackets": "always",
+  "editor.autoClosingQuotes": "always",
+  "editor.quickSuggestions": {
+    "comments": "off",
+    "strings": "off",
+    "other": "off"
+  },
+  "editor.suggestOnTriggerCharacters": false,
+  "editor.inlineSuggest.enabled": false,
+  "editor.parameterHints.enabled": false,
+  "editor.snippetSuggestions": "none",
+  "editor.hover.enabled": "off",
+  // 关闭自动补全，但开启语义引擎以提供语义高亮
+  "C_Cpp.autocomplete": "Disabled",
+  "C_Cpp.intelliSenseEngine": "Default",
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": true,
+  "files.associations": {
+    "*.cpp": "cpp",
+    "*.hpp": "cpp",
+    "*.h": "cpp"
+  },
+  "editor.semanticHighlighting.enabled": true
+  ,
+  "workbench.colorTheme": "Default Dark+"
+}
