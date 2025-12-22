@@ -1,17 +1,20 @@
 #include <iostream>
+#include <string>
 using namespace std;
-int main () {
-    int x ;
-    cin >> x;
-    if (x < 5){
-        int y = x;
-        cout << y << endl;
-    }else if (x >= 5&& x < 10){
-        int y = 3*x+2 ;
-        cout << y << endl;
-    }else{
-        int y = x*x + 3*x - 6 ;
-        cout << y << endl;
+int main (){
+    string s;
+    getline(cin,s);
+    for (int i = 0;i < s.size(); i++){
+        if(s[i] == ' '){
+            for(int j = i;j < s.size() - i;j++){
+                s[j] = s[j+1] ;
+            }
+            s.pop_back();
+            --i;
+        }
     }
-    return 0 ;
+    for (int i = 0;i < s.size();i++){
+        cout << s[i];
+    }
+    return 0;
 }

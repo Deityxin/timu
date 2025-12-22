@@ -1,21 +1,20 @@
 #include <iostream>
-using namespace std; 
-void frontn (){
-    for (int i = 1 ; i<=4 ;i ++){
-            int count = 2*i - 1;
-            cout << string(count, '*') << endl;
-}
-}
-int main () {
-    int n ;
-    cin >> n ;
-    if (n > 0&&n < 5){
-        frontn();
+#include <vector>
+using namespace std;
+int main(){
+    vector<int> dig;
+    for(int x ; cin >> x;) dig.push_back(x);
+    if(dig.size() % 2 == 0){
+        for(int i = 0;i < dig.size();i+=2){
+            int a = dig[i] + dig[i+1];
+            cout << " "<< a;
         }
-    else{
-        frontn() ;
-       for (int i = 5; i <= n; ++i) {
-            cout << string(3, '*') << endl;
+    }else{
+        cout << dig[dig.size() - 1];
+        int b = dig.size() / 2;
+        for(int j = 0; j < b;j++){
+            int c = dig[j] + dig[dig.size() - j -1];
+            cout <<" "<< c;
         }
     }
     return 0;

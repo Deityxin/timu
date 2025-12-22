@@ -35,5 +35,9 @@
   }
   ,
   // 语义高亮开启，仍禁用补全
-  "C_Cpp.intelliSenseEngine": "Default"
+  "C_Cpp.intelliSenseEngine": "Default",
+  "[markdown]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2
+  }
 }
