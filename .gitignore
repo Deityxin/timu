@@ -2,9 +2,14 @@
 *.exe
 *.out
 *.o
+*.obj
 *.a
 *.so
 *.dll
+*.pdb
+*.ilk
+*.lib
+*.exp
 
 # 构建目录
 build/
