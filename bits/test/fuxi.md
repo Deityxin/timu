@@ -123,8 +123,8 @@ I/O 规范与类型
    sort(digit1.begin(), digit1.end(), [](int a, int b) {
     return a > b;
 }); sort的应用
-sort(dig.begin(),dig.end(),[](int a, int b){
-	return a > b ;
+sort(dig.begin(), dig.end(), [](int a, int b) {
+	return a > b;
 });
 自定义函数
 - he(x,y): 简单加法返回（01 copy.cpp）。
