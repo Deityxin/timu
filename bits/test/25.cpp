@@ -19,7 +19,6 @@ long long solve(int sum, int parts, int minVal) {
 int main() {
     int n, k;
     if (!(cin >> n >> k)) return 0;
-
     memset(dp, -1, sizeof(dp));
     cout << solve(n, k, 1) << "\n";
     return 0;
