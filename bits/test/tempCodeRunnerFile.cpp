@@ -1,5 +1,5 @@
-#include <bits/stdc++.h>
-using namespace std;
-int main(){
-	return 0;
-}
+
+    cin >> n ; 
+    vector<int> dig (n) ;
+    vector<string> s_ ;
+    for (int
