@@ -15,7 +15,7 @@ int main(){
         else{
             return dig1[1] > dig2[1] ;
         }
-    } ;
+    } ; 
     sort(dig.begin() , dig.end() , compare_) ;
     for(int i = 0 ; i < n ; i++) if(dig[i][1] >= dig[a - 1][1]) b +=1 ;
     cout << dig[a - 1][1] << " " << b << "\n" ;
