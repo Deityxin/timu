@@ -8,6 +8,11 @@ This repo includes two scripts for automatic daily commits:
   - Does nothing when the working tree is clean.
 - `scripts/register-auto-commit-task.ps1`
   - Registers a Windows Scheduled Task that runs `auto-commit.ps1` once every day.
+- `scripts/auto-push-pending.ps1`
+  - Checks whether the remote is reachable.
+  - Pushes local pending commits when the network is available again.
+- `scripts/register-auto-push-task.ps1`
+  - Registers a Windows Scheduled Task that checks for pending pushes every few minutes.
 
 ## Default behavior
 
@@ -28,6 +33,12 @@ pwsh -File d:\timu\scripts\register-auto-commit-task.ps1 -Time 22:30
 pwsh -File d:\timu\scripts\register-auto-commit-task.ps1 -Push
 ```
 
+## Enable automatic retry push after the network comes back
+
+```pwsh
+pwsh -File d:\timu\scripts\register-auto-push-task.ps1 -IntervalMinutes 15
+```
+
 ## Safe verification without creating a commit
 
 ```pwsh
@@ -39,3 +50,5 @@ pwsh -File d:\timu\scripts\auto-commit.ps1 -DryRun
 The runtime log is written outside the repo so it will not create extra git changes:
 
 `%LOCALAPPDATA%\timu\logs\auto-commit.log`
+
+`%LOCALAPPDATA%\timu\logs\auto-push.log`
