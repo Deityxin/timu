@@ -12,7 +12,8 @@ This repo includes two scripts for automatic daily commits:
   - Checks whether the remote is reachable.
   - Pushes local pending commits when the network is available again.
 - `scripts/register-auto-push-task.ps1`
-  - Registers a Windows Scheduled Task that checks for pending pushes every few minutes.
+  - Registers a Windows Scheduled Task.
+  - The task checks for pending pushes every few minutes.
 
 ## Default behavior
 
