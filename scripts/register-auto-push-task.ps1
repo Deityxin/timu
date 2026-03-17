@@ -15,9 +15,25 @@ if (!(Test-Path $scriptPath)) {
     throw "Auto push script not found: $scriptPath"
 }
 
+$hiddenRunnerPath = Join-Path $RepoPath "scripts\run-hidden.vbs"
+if (!(Test-Path $hiddenRunnerPath)) {
+    throw "Hidden runner script not found: $hiddenRunnerPath"
+}
+
 $pwshPath = (Get-Command pwsh -ErrorAction Stop).Source
 $startTime = (Get-Date).AddMinutes(1).ToString("HH:mm")
-$taskCommand = '"' + $pwshPath + '" -NoProfile -ExecutionPolicy Bypass -File "' + $scriptPath + '" -RepoPath "' + $RepoPath + '"'
+$taskCommand = @(
+    'wscript.exe',
+    ('"' + $hiddenRunnerPath + '"'),
+    ('"' + $pwshPath + '"'),
+    '-NoProfile',
+    '-ExecutionPolicy',
+    'Bypass',
+    '-File',
+    ('"' + $scriptPath + '"'),
+    '-RepoPath',
+    ('"' + $RepoPath + '"')
+) -join ' '
 
 schtasks /Create /TN $TaskName /SC MINUTE /MO $IntervalMinutes /ST $startTime /TR $taskCommand /RL LIMITED /F | Out-Null
 if ($LASTEXITCODE -ne 0) {

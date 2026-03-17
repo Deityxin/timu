@@ -12,6 +12,11 @@ if (!(Test-Path $scriptPath)) {
     throw "Auto commit script not found: $scriptPath"
 }
 
+$hiddenRunnerPath = Join-Path $RepoPath "scripts\run-hidden.vbs"
+if (!(Test-Path $hiddenRunnerPath)) {
+    throw "Hidden runner script not found: $hiddenRunnerPath"
+}
+
 $pwshPath = (Get-Command pwsh -ErrorAction Stop).Source
 $runUser = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
 
@@ -24,7 +29,9 @@ $hour = [int]$timeParts[0]
 $minute = [int]$timeParts[1]
 $triggerTime = [datetime]::Today.AddHours($hour).AddMinutes($minute)
 
-$arguments = @(
+$runnerArguments = @(
+    ('"' + $hiddenRunnerPath + '"'),
+    ('"' + $pwshPath + '"'),
     '-NoProfile',
     '-ExecutionPolicy',
     'Bypass',
@@ -35,10 +42,10 @@ $arguments = @(
 )
 
 if ($Push) {
-    $arguments += '-Push'
+    $runnerArguments += '-Push'
 }
 
-$action = New-ScheduledTaskAction -Execute $pwshPath -Argument ($arguments -join ' ')
+$action = New-ScheduledTaskAction -Execute "wscript.exe" -Argument ($runnerArguments -join ' ')
 $trigger = New-ScheduledTaskTrigger -Daily -At $triggerTime
 $settings = New-ScheduledTaskSettingsSet -StartWhenAvailable -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
 $principal = New-ScheduledTaskPrincipal -UserId $runUser -LogonType Interactive -RunLevel Limited
