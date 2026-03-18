@@ -1,0 +1,212 @@
+{
+  "database_id": "326dca11d7138002a16bd98e9a91ad63",
+  "csv_path": "input.csv",
+  "dedupe_property": "题号",
+  "notion_version": "2022-06-28",
+  "field_ids": {
+    "title": "题号",
+    "type": "题型",
+    "difficulty": "难度",
+    "status": "状态",
+    "last_review": "最后复习",
+    "next_review": "复习",
+    "error_tags": "错误标签",
+    "breakthrough": "一句话突破口"
+  },
+  "csv_export_headers": {
+    "title": "题号/标题",
+    "type": "题型",
+    "difficulty": "难度",
+    "status": "状态",
+    "last_review": "最后复习",
+    "next_review": "下次复习",
+    "error_tags": "错误标签",
+    "breakthrough": "一句话突破口"
+  },
+  "type_labels": {
+    "default": "基础算法",
+    "dp": "DP",
+    "graph": "图论",
+    "tree": "树",
+    "data_structure": "数据结构",
+    "string": "字符串",
+    "number_theory": "数论",
+    "binary_search": "二分",
+    "greedy": "贪心",
+    "basic": "基础算法"
+  },
+  "difficulty_labels": {
+    "easy": "简单",
+    "medium": "中等",
+    "hard": "困难"
+  },
+  "tag_labels": {
+    "todo": "待复盘",
+    "long_code": "代码较长"
+  },
+  "auto_source_dirs": [
+    "bits/test",
+    "bits/shiyan"
+  ],
+  "auto_ignore_file_names": [
+    "tempCodeRunnerFile.cpp"
+  ],
+  "auto_default_values": {
+    "type": "基础算法",
+    "difficulty": "中等",
+    "status_done": "已做",
+    "status_todo": "待做",
+    "breakthrough": "自动导入：来自本地代码文件"
+  },
+  "auto_type_breakthrough_map": {
+    "DP": "看到最优子结构和状态转移时优先考虑 DP",
+    "图论": "图上的最短路/连通性/有向无环结构优先建图处理",
+    "图论-最短路": "带权图路径问题优先判断是否用 Dijkstra/SPFA/Floyd",
+    "图论-拓扑排序": "有向无环依赖关系优先考虑拓扑排序",
+    "图论-最小生成树": "连通图最小连边代价优先考虑 Kruskal/Prim",
+    "树": "层次关系明显时优先考虑树形遍历或树上倍增",
+    "树-LCA": "频繁祖先查询优先考虑倍增 LCA",
+    "树-树形DP": "子树贡献合并时优先考虑树形 DP",
+    "数据结构": "需要高频更新与查询时优先选择合适数据结构",
+    "数据结构-并查集": "集合合并与连通性判断优先考虑并查集",
+    "数据结构-线段树": "区间更新与区间查询并存时优先考虑线段树",
+    "数据结构-树状数组": "前缀和动态维护优先考虑树状数组",
+    "数据结构-单调结构": "区间最值滑动维护优先考虑单调栈/队列",
+    "数据结构-堆": "实时维护前k或最值集合优先考虑堆",
+    "字符串": "大量模式匹配时优先考虑字符串算法",
+    "字符串-KMP": "单模式匹配优先考虑 KMP",
+    "字符串-Trie": "字典前缀检索优先考虑 Trie",
+    "数论": "出现质数与整除关系时优先考虑数论工具",
+    "数论-筛法与质数": "批量判质数优先筛法",
+    "数论-整除与同余": "gcd/exgcd/同余方程优先数论分解",
+    "数论-快速幂": "幂取模与快速指数运算优先快速幂",
+    "二分": "答案单调时优先考虑二分",
+    "贪心": "局部最优可推出全局时优先贪心",
+    "双指针/滑动窗口": "区间连续约束优先双指针或滑动窗口",
+    "前缀和与差分": "批量区间求和或区间增减优先前缀和/差分",
+    "排序与模拟": "规则明确且可直接按流程实现时优先模拟",
+    "基础算法": "先找不变量，再选择最小必要算法"
+  },
+  "auto_keyword_rules": [
+    {
+      "pattern": "未完成|todo",
+      "status": "待做",
+      "tags": "未完成|待复盘"
+    },
+    {
+      "pattern": "修改|xiugai",
+      "tags": "复盘修改"
+    },
+    {
+      "pattern": "dijkstra|最短路",
+      "type": "图论-最短路",
+      "breakthrough": "权重图最短路优先考虑 Dijkstra"
+    },
+    {
+      "pattern": "spfa|floyd|bellman",
+      "type": "图论-最短路"
+    },
+    {
+      "pattern": "topological|topo|in_degree|indegree",
+      "type": "图论-拓扑排序"
+    },
+    {
+      "pattern": "kruskal|prim|minimum\\s*spanning|mst",
+      "type": "图论-最小生成树"
+    },
+    {
+      "pattern": "templates/dsu|\\bdsu\\b|union\\s*find",
+      "type": "数据结构-并查集"
+    },
+    {
+      "pattern": "templates/segment_tree|templates/lazy_segment_tree|segment\\s*tree",
+      "type": "数据结构-线段树"
+    },
+    {
+      "pattern": "templates/fenwick|fenwick|\\bbit\\b",
+      "type": "数据结构-树状数组"
+    },
+    {
+      "pattern": "templates/monotonic_queue|monotonic\\s*stack|monotonic\\s*queue",
+      "type": "数据结构-单调结构"
+    },
+    {
+      "pattern": "priority_queue|\\bheap\\b",
+      "type": "数据结构-堆"
+    },
+    {
+      "pattern": "templates/kmp|\\bkmp\\b",
+      "type": "字符串-KMP"
+    },
+    {
+      "pattern": "templates/trie|\\btrie\\b",
+      "type": "字符串-Trie"
+    },
+    {
+      "pattern": "templates/sieve|\\bsieve\\b|\\bprime\\b",
+      "type": "数论-筛法与质数"
+    },
+    {
+      "pattern": "\\bgcd\\b|\\blcm\\b|\\bexgcd\\b|\\bphi\\b",
+      "type": "数论-整除与同余"
+    },
+    {
+      "pattern": "templates/fast_pow|fast\\s*pow|pow\\s*\\(",
+      "type": "数论-快速幂"
+    },
+    {
+      "pattern": "templates/lca|\\blca\\b|binary\\s*lifting",
+      "type": "树-LCA"
+    },
+    {
+      "pattern": "tree\\s*dp|subtree",
+      "type": "树-树形DP"
+    },
+    {
+      "pattern": "two[-_ ]?pointer|sliding\\s*window",
+      "type": "双指针/滑动窗口"
+    },
+    {
+      "pattern": "prefix\\s*sum|difference\\s*array",
+      "type": "前缀和与差分"
+    },
+    {
+      "pattern": "sort\\s*\\(|simulation|simulate",
+      "type": "排序与模拟"
+    }
+  ],
+  "columns": {
+    "题号": {
+      "notion_name": "题号",
+      "type": "title"
+    },
+    "题型": {
+      "notion_name": "题型",
+      "type": "select"
+    },
+    "难度": {
+      "notion_name": "难度",
+      "type": "select"
+    },
+    "状态": {
+      "notion_name": "状态",
+      "type": "select"
+    },
+    "最后复习": {
+      "notion_name": "最后复习",
+      "type": "date"
+    },
+    "复习": {
+      "notion_name": "复习",
+      "type": "date"
+    },
+    "错误标签": {
+      "notion_name": "错误标签",
+      "type": "multi_select"
+    },
+    "一句话突破口": {
+      "notion_name": "一句话突破口",
+      "type": "rich_text"
+    }
+  }
+}
