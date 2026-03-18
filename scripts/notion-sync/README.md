@@ -6,7 +6,8 @@
 - `sync_to_notion.py`：CSV 同步脚本（可选）
 - `run-sync.ps1`：一键运行脚本
 - `config.json`：当前可用配置（已填你的数据库 ID）
-- `input.csv`：CSV 样例（仅 CSV 模式需要）
+- `notion_import.csv`：自动生成的导入文件（默认 CSV 数据源）
+- `input.csv`：CSV 样例（可手动参考）
 
 ## 一次性准备（只做一次）
 
@@ -44,10 +45,19 @@
 ## 智能分类规则（已内置）
 
 - 根据文件名/路径关键词自动识别题型（如 `dp`、`dijkstra`、`kmp`、`sieve`、`二分`、`贪心`）。
+- 文件名/路径提示优先于正文噪声，降低误判（例如变量名偶然命中关键词）。
 - 根据代码行数自动估计难度：短代码偏 `简单`，超长代码偏 `困难`。
 - 文件名含 `未完成` / `todo` 自动标记为 `待做` 并附加错误标签。
 - 文件名含 `修改` / `xiugai` 自动附加 `复盘修改` 标签。
 - 可在 `config.json` 的 `auto_keyword_rules` 和 `auto_type_breakthrough_map` 自定义规则。
+
+## 洛谷 105-200 待做计划（自动并入）
+
+- 已内置 `luogu_pending_plan`：默认把 105-200 号计划题写入 Notion，状态为 `待做`。
+- 这些记录会按学习阶段自动分配题型：`排序与模拟` → `前缀和与差分`
+   → `并查集` → `线段树` → `背包 DP` → `最短路` → `LCA` → `快速幂`。
+- 若对应编号已存在本地解题文件（例如 `bits/test/137.cpp`），会自动跳过该计划题，避免重复。
+- 计划配置可在 `config.json` 的 `luogu_pending_plan` 修改（区间、分段题型、难度、突破口）。
 
 ## 如果你想“已存在就更新”
 
@@ -64,6 +74,8 @@
 ```
 
 CSV 模式依赖 Python 3.9+。
+
+`-UseCsv` 会先自动执行 `generate_import_csv.ps1`，再按 `config.json` 里的 `csv_path` 同步。
 
 ## 直接导入 Notion（推荐）
 
@@ -121,7 +133,8 @@ Notion 里操作：
 如果你希望每天全自动同步（无人值守，走 API），可以注册定时任务：
 
 ```powershell
-.\register-one-click-task.ps1 -StartTime "22:30" -ApiRetry 4 -RepeatEveryHours 2 -NotifyOnSuccess $true
+.\register-one-click-task.ps1 -StartTime "22:30" -ApiRetry 4 `
+   -RepeatEveryHours 2 -NotifyOnSuccess $true
 ```
 
 说明：该任务会以 `ApiOnly + NoOpen` 模式运行，不弹窗、不中断；若 API 当次不可达，会按重试次数自动重试，并在当天后续时段（例如每 2 小时）继续自动重试。

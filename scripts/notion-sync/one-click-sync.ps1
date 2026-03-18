@@ -43,6 +43,7 @@ function Test-NotionApi {
 $config = Get-Content -Raw -Encoding UTF8 (Join-Path $PSScriptRoot "config.json") | ConvertFrom-Json
 $databaseId = ([string]$config.database_id).Replace("-", "")
 $notionVersion = if ($config.notion_version) { [string]$config.notion_version } else { "2022-06-28" }
+$csvRelativePath = if ($config.csv_path) { [string]$config.csv_path } else { "notion_import.csv" }
 $notionUrl = ""
 if ($config.PSObject.Properties.Name -contains "notion_database_url") {
     $notionUrl = [string]$config.notion_database_url
@@ -56,7 +57,7 @@ if (-not $?) {
     return
 }
 
-$csvPath = Join-Path $PSScriptRoot "notion_import.csv"
+$csvPath = Join-Path $PSScriptRoot $csvRelativePath
 Write-Host "CSV ready: $csvPath" -ForegroundColor Green
 
 if ($SkipApi) {
@@ -118,7 +119,8 @@ if ($SkipApi) {
 }
 
 Write-Host "[3/3] Manual merge fallback" -ForegroundColor Cyan
-Write-Host "In Notion: open DB -> ... -> Merge with CSV -> choose notion_import.csv" -ForegroundColor Yellow
+$csvName = Split-Path -Path $csvPath -Leaf
+Write-Host "In Notion: open DB -> ... -> Merge with CSV -> choose $csvName" -ForegroundColor Yellow
 
 if (-not $NoOpen) {
     Start-Process explorer.exe "/select,$csvPath" | Out-Null

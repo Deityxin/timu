@@ -7,6 +7,12 @@ param(
 $ErrorActionPreference = "Stop"
 Set-Location $PSScriptRoot
 
+$classificationModule = Join-Path $PSScriptRoot "classification.shared.ps1"
+if (-not (Test-Path $classificationModule)) {
+    throw "Shared classification module not found: $classificationModule"
+}
+. $classificationModule
+
 function Get-ObjectValue {
     param(
         [object]$Object,
@@ -42,7 +48,8 @@ function Invoke-NotionApi {
         [string]$Url,
         [hashtable]$Headers,
         [object]$Body = $null,
-        [int]$RetryCount = 3
+        [int]$RetryCount = 5,
+        [string]$Operation = ""
     )
 
     $attempt = 0
@@ -63,17 +70,59 @@ function Invoke-NotionApi {
                 $statusCode = [int]$response.StatusCode
             }
 
+            $retryAfterSeconds = 0
+            if ($response -and $response.Headers) {
+                $retryAfterRaw = [string]$response.Headers["Retry-After"]
+                if (-not [string]::IsNullOrWhiteSpace($retryAfterRaw)) {
+                    [void][int]::TryParse($retryAfterRaw, [ref]$retryAfterSeconds)
+                }
+            }
+
             $messageText = [string]$_.Exception.Message
+            if ($_.ErrorDetails -and -not [string]::IsNullOrWhiteSpace($_.ErrorDetails.Message)) {
+                $messageText = [string]$_.ErrorDetails.Message
+            }
+            if ($null -eq $messageText) {
+                $messageText = ""
+            }
+            if ($messageText.Length -gt 600) {
+                $messageText = $messageText.Substring(0, 600) + "..."
+            }
+
             $isTransientStatus = $statusCode -in @(408, 409, 425, 429, 500, 502, 503, 504)
             $isTransientMessage = $messageText -match "timed out|timeout|temporarily|remote host|forcibly closed|connection reset|ssl connection could not be established|ssl handshake|强迫关闭|连接被重置|无法连接|name resolution"
 
             if (($isTransientStatus -or $isTransientMessage) -and $attempt -le $RetryCount) {
-                $sleepSeconds = [Math]::Min(20, [int][Math]::Pow(2, $attempt))
-                Write-Host "[RETRY] $Method $Url attempt=$attempt wait=${sleepSeconds}s" -ForegroundColor Yellow
+                $baseDelay = [Math]::Min(30, [int][Math]::Pow(2, [Math]::Min($attempt, 5)))
+                $jitter = Get-Random -Minimum 0 -Maximum 1000
+                $sleepSeconds = [Math]::Min(30, $baseDelay + [int][Math]::Floor($jitter / 400.0))
+                if ($statusCode -eq 429 -and $retryAfterSeconds -gt 0) {
+                    $sleepSeconds = [Math]::Min(60, [Math]::Max(1, $retryAfterSeconds))
+                }
+
+                $opText = if ([string]::IsNullOrWhiteSpace($Operation)) { "notion_api" } else { $Operation }
+                Write-Host "[RETRY][$opText] $Method status=$statusCode attempt=$attempt/$RetryCount wait=${sleepSeconds}s" -ForegroundColor Yellow
                 Start-Sleep -Seconds $sleepSeconds
                 continue
             }
-            throw
+
+            $errorType = "NON_RETRYABLE"
+            switch ($statusCode) {
+                401 { $errorType = "AUTH" }
+                403 { $errorType = "PERMISSION" }
+                404 { $errorType = "NOT_FOUND" }
+                400 { $errorType = "VALIDATION" }
+                422 { $errorType = "VALIDATION" }
+                429 { $errorType = "RATE_LIMIT" }
+                default {
+                    if ($isTransientStatus -or $isTransientMessage) {
+                        $errorType = "TRANSIENT_EXHAUSTED"
+                    }
+                }
+            }
+
+            $opText = if ([string]::IsNullOrWhiteSpace($Operation)) { "notion_api" } else { $Operation }
+            throw "[$errorType][$opText] $Method $Url failed (status=$statusCode): $messageText"
         }
     }
 }
@@ -105,7 +154,7 @@ function Get-ExistingKeyMap {
             $body.start_cursor = $cursor
         }
 
-        $result = Invoke-NotionApi -Method "POST" -Url "https://api.notion.com/v1/databases/$DatabaseId/query" -Headers $Headers -Body $body
+        $result = Invoke-NotionApi -Method "POST" -Url "https://api.notion.com/v1/databases/$DatabaseId/query" -Headers $Headers -Body $body -Operation "query_existing"
         foreach ($page in $result.results) {
             $propValue = Get-ObjectValue -Object $page.properties -Name $DedupeProperty
             if ($null -eq $propValue) {
@@ -131,7 +180,7 @@ function Get-DatabaseSchemaMap {
         [hashtable]$Headers
     )
 
-    $result = Invoke-NotionApi -Method "GET" -Url "https://api.notion.com/v1/databases/$DatabaseId" -Headers $Headers
+    $result = Invoke-NotionApi -Method "GET" -Url "https://api.notion.com/v1/databases/$DatabaseId" -Headers $Headers -Operation "fetch_schema"
     $map = @{}
     foreach ($property in $result.properties.PSObject.Properties) {
         $map[$property.Name] = [string]$property.Value.id
@@ -189,203 +238,6 @@ function New-NotionProperties {
     return $properties
 }
 
-function Get-MappedBreakthrough {
-    param(
-        [string]$TypeName,
-        [string]$Fallback,
-        [object]$Config
-    )
-
-    $map = Get-ObjectValue -Object $Config -Name "auto_type_breakthrough_map"
-    if ($null -eq $map) {
-        return $Fallback
-    }
-
-    $mapped = Get-ObjectValue -Object $map -Name $TypeName -Default $null
-    if ($null -eq $mapped) {
-        return $Fallback
-    }
-
-    return [string]$mapped
-}
-
-function Get-TypeLabel {
-    param(
-        [string]$Key,
-        [object]$Config,
-        [string]$Fallback
-    )
-
-    $map = Get-ObjectValue -Object $Config -Name "type_labels"
-    $value = Get-ObjectValue -Object $map -Name $Key -Default $null
-    if ($null -eq $value) {
-        return $Fallback
-    }
-    return [string]$value
-}
-
-function Get-DifficultyLabel {
-    param(
-        [string]$Key,
-        [object]$Config,
-        [string]$Fallback
-    )
-
-    $map = Get-ObjectValue -Object $Config -Name "difficulty_labels"
-    $value = Get-ObjectValue -Object $map -Name $Key -Default $null
-    if ($null -eq $value) {
-        return $Fallback
-    }
-    return [string]$value
-}
-
-function Get-TagLabel {
-    param(
-        [string]$Key,
-        [object]$Config,
-        [string]$Fallback
-    )
-
-    $map = Get-ObjectValue -Object $Config -Name "tag_labels"
-    $value = Get-ObjectValue -Object $map -Name $Key -Default $null
-    if ($null -eq $value) {
-        return $Fallback
-    }
-    return [string]$value
-}
-
-function Get-SmartClassification {
-    param(
-        [object]$File,
-        [string]$RelativePath,
-        [string]$DefaultType,
-        [string]$DefaultDifficulty,
-        [string]$DefaultStatusDone,
-        [string]$DefaultStatusTodo,
-        [string]$DefaultBreakthrough,
-        [object]$Config
-    )
-
-    $searchText = ($RelativePath + " " + $File.BaseName).ToLowerInvariant()
-    try {
-        $fileText = (Get-Content -Path $File.FullName -Raw -Encoding UTF8).ToLowerInvariant()
-        $searchText += " " + $fileText
-    }
-    catch {
-        $fileText = ""
-    }
-
-    $isTodo = ($File.Name -like "*temp*") -or ($File.Name -like "*todo*")
-    $lineCount = 0
-    try {
-        $lineCount = (Get-Content -Path $File.FullName -Encoding UTF8 | Measure-Object -Line).Lines
-    }
-    catch {
-        $lineCount = 0
-    }
-
-    $typeKey = "default"
-    if ($searchText -match "\bdp\b|dynamic programming") {
-        $typeKey = "dp"
-    }
-    elseif ($searchText -match "dijkstra|spfa|floyd|graph|\bbfs\b|\bdfs\b|topo") {
-        $typeKey = "graph"
-    }
-    elseif ($searchText -match "\blca\b|tree") {
-        $typeKey = "tree"
-    }
-    elseif ($searchText -match "segment|fenwick|\bbit\b|dsu|trie|union find") {
-        $typeKey = "data_structure"
-    }
-    elseif ($searchText -match "kmp|string|manacher|suffix") {
-        $typeKey = "string"
-    }
-    elseif ($searchText -match "prime|sieve|gcd|lcm|pow|math") {
-        $typeKey = "number_theory"
-    }
-    elseif ($searchText -match "binary search|lower_bound|upper_bound|mid") {
-        $typeKey = "binary_search"
-    }
-    elseif ($searchText -match "greedy") {
-        $typeKey = "greedy"
-    }
-    elseif ($searchText -match "sort|two[-_ ]?pointer") {
-        $typeKey = "basic"
-    }
-
-    $difficultyKey = "medium"
-    if ($lineCount -gt 220) {
-        $difficultyKey = "hard"
-    }
-    elseif ($lineCount -gt 0 -and $lineCount -le 70) {
-        $difficultyKey = "easy"
-    }
-
-    if ($searchText -match "\bhard\b") {
-        $difficultyKey = "hard"
-    }
-    elseif ($searchText -match "\beasy\b") {
-        $difficultyKey = "easy"
-    }
-
-    $typeValue = Get-TypeLabel -Key $typeKey -Config $Config -Fallback $DefaultType
-    $difficultyValue = Get-DifficultyLabel -Key $difficultyKey -Config $Config -Fallback $DefaultDifficulty
-    $statusValue = if ($isTodo) { $DefaultStatusTodo } else { $DefaultStatusDone }
-    $tags = @()
-
-    if ($isTodo) {
-        $tags += Get-TagLabel -Key "todo" -Config $Config -Fallback "todo"
-    }
-    if ($lineCount -gt 220) {
-        $tags += Get-TagLabel -Key "long_code" -Config $Config -Fallback "long_code"
-    }
-
-    $breakthroughValue = Get-MappedBreakthrough -TypeName $typeValue -Fallback $DefaultBreakthrough -Config $Config
-
-    $rules = Get-ObjectValue -Object $Config -Name "auto_keyword_rules" -Default @()
-    foreach ($rule in $rules) {
-        $pattern = [string](Get-ObjectValue -Object $rule -Name "pattern" -Default "")
-        if ([string]::IsNullOrWhiteSpace($pattern)) {
-            continue
-        }
-
-        if ($searchText -match $pattern) {
-            $typeOverride = Get-ObjectValue -Object $rule -Name "type" -Default $null
-            if ($null -ne $typeOverride) {
-                $typeValue = [string]$typeOverride
-            }
-
-            $difficultyOverride = Get-ObjectValue -Object $rule -Name "difficulty" -Default $null
-            if ($null -ne $difficultyOverride) {
-                $difficultyValue = [string]$difficultyOverride
-            }
-
-            $statusOverride = Get-ObjectValue -Object $rule -Name "status" -Default $null
-            if ($null -ne $statusOverride) {
-                $statusValue = [string]$statusOverride
-            }
-
-            $tagOverride = Get-ObjectValue -Object $rule -Name "tags" -Default $null
-            if ($null -ne $tagOverride) {
-                $tags += Split-TagString -Value ([string]$tagOverride)
-            }
-
-            $breakthroughOverride = Get-ObjectValue -Object $rule -Name "breakthrough" -Default $null
-            if ($null -ne $breakthroughOverride) {
-                $breakthroughValue = [string]$breakthroughOverride
-            }
-        }
-    }
-
-    return @{
-        type = $typeValue
-        difficulty = $difficultyValue
-        status = $statusValue
-        tags = (($tags | Select-Object -Unique) -join "|")
-        breakthrough = $breakthroughValue
-    }
-}
-
 $configFile = Join-Path $PSScriptRoot $ConfigPath
 if (-not (Test-Path $configFile)) {
     throw "Config file not found: $configFile"
@@ -440,6 +292,7 @@ $defaultStatusTodo = [string](Get-ObjectValue -Object $defaults -Name "status_to
 $defaultBreakthrough = [string](Get-ObjectValue -Object $defaults -Name "breakthrough" -Default "Auto imported from local source file")
 
 $records = @()
+$existingIndices = @{}
 foreach ($relativeDir in $sourceDirs) {
     $sourcePath = Join-Path $repoRoot $relativeDir
     if (-not (Test-Path $sourcePath)) {
@@ -452,8 +305,13 @@ foreach ($relativeDir in $sourceDirs) {
             continue
         }
 
+        $idx = Get-NotionSyncNumericIndexFromBaseName -BaseName $file.BaseName
+        if ($null -ne $idx) {
+            $existingIndices[$idx] = $true
+        }
+
         $relativePath = $file.FullName.Substring($repoRoot.Length).TrimStart('\\') -replace '\\', '/'
-        $smart = Get-SmartClassification -File $file -RelativePath $relativePath -DefaultType $defaultType -DefaultDifficulty $defaultDifficulty -DefaultStatusDone $defaultStatusDone -DefaultStatusTodo $defaultStatusTodo -DefaultBreakthrough $defaultBreakthrough -Config $config
+        $smart = Get-NotionSyncClassification -File $file -RelativePath $relativePath -DefaultType $defaultType -DefaultDifficulty $defaultDifficulty -DefaultStatusDone $defaultStatusDone -DefaultStatusTodo $defaultStatusTodo -DefaultBreakthrough $defaultBreakthrough -Config $config
 
         $records += @{
             $fieldTitle = $relativePath
@@ -465,6 +323,21 @@ foreach ($relativeDir in $sourceDirs) {
             $fieldErrorTags = [string]$smart.tags
             $fieldBreakthrough = [string]$smart.breakthrough
         }
+    }
+}
+
+$pendingRows = @(Get-NotionSyncLuoguPendingRows -Config $config -ExistingIndices $existingIndices)
+foreach ($pending in $pendingRows) {
+    $records += @{
+        $fieldTitle = [string]$pending.title
+        $fieldType = [string]$pending.type
+        $fieldDifficulty = [string]$pending.difficulty
+        $fieldStatus = [string]$pending.status
+        $fieldLastReview = [string]$pending.last_review
+        $fieldNextReview = [string]$pending.next_review
+        $fieldErrorTags = [string]$pending.error_tags
+        $fieldBreakthrough = [string]$pending.breakthrough
+        "__legacy_title" = [string]$pending.legacy_title
     }
 }
 
@@ -480,6 +353,7 @@ $created = 0
 $updated = 0
 $skipped = 0
 $failed = 0
+$migrated = 0
 $errorSamples = New-Object System.Collections.Generic.List[string]
 
 $records = $records | Sort-Object { $_[$fieldTitle] }
@@ -500,11 +374,32 @@ foreach ($record in $records) {
         continue
     }
 
+    $legacyTitle = ""
+    if ($record.ContainsKey("__legacy_title")) {
+        $legacyTitle = [string]$record["__legacy_title"]
+    }
+
     $exists = $existingMap.ContainsKey($key)
+    $legacyExists = (-not $exists) -and (-not [string]::IsNullOrWhiteSpace($legacyTitle)) -and $existingMap.ContainsKey($legacyTitle)
+    $isMigratingTitle = $legacyExists
+    $pageIdForUpdate = ""
+    if ($exists) {
+        $pageIdForUpdate = [string]$existingMap[$key]
+    }
+    elseif ($legacyExists) {
+        $pageIdForUpdate = [string]$existingMap[$legacyTitle]
+        $exists = $true
+    }
+
     if ($DryRun) {
         if ($exists -and $UpdateExisting) {
             $updated++
-            Write-Host "[DRY-RUN] UPDATE: $key"
+            if ($isMigratingTitle) {
+                Write-Host "[DRY-RUN] MIGRATE+UPDATE: $legacyTitle -> $key"
+            }
+            else {
+                Write-Host "[DRY-RUN] UPDATE: $key"
+            }
         }
         elseif ($exists) {
             $skipped++
@@ -519,19 +414,29 @@ foreach ($record in $records) {
 
     try {
         if ($exists -and $UpdateExisting) {
-            $pageId = $existingMap[$key]
-            Invoke-NotionApi -Method "PATCH" -Url "https://api.notion.com/v1/pages/$pageId" -Headers $headers -Body @{ properties = $properties } | Out-Null
+            $pageId = $pageIdForUpdate
+            Invoke-NotionApi -Method "PATCH" -Url "https://api.notion.com/v1/pages/$pageId" -Headers $headers -Body @{ properties = $properties } -Operation "update_page" | Out-Null
             $updated++
-            Write-Host "[UPDATED] $key"
+            if ($isMigratingTitle) {
+                $migrated++
+                $existingMap.Remove($legacyTitle)
+                $existingMap[$key] = $pageId
+                Write-Host "[MIGRATED] $legacyTitle -> $key"
+            }
+            else {
+                Write-Host "[UPDATED] $key"
+            }
+            Start-Sleep -Milliseconds 120
         }
         elseif ($exists) {
             $skipped++
             Write-Host "[SKIPPED] $key"
         }
         else {
-            Invoke-NotionApi -Method "POST" -Url "https://api.notion.com/v1/pages" -Headers $headers -Body @{ parent = @{ database_id = $databaseId }; properties = $properties } | Out-Null
+            Invoke-NotionApi -Method "POST" -Url "https://api.notion.com/v1/pages" -Headers $headers -Body @{ parent = @{ database_id = $databaseId }; properties = $properties } -Operation "create_page" | Out-Null
             $created++
             Write-Host "[CREATED] $key"
+            Start-Sleep -Milliseconds 120
         }
     }
     catch {
@@ -554,6 +459,7 @@ Write-Host "Created: $created"
 Write-Host "Updated: $updated"
 Write-Host "Skipped: $skipped"
 Write-Host "Failed: $failed"
+Write-Host "Migrated titles: $migrated"
 Write-Host "Scanned: $($records.Count)"
 
 if ($errorSamples.Count -gt 0) {

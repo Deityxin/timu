@@ -1,6 +1,6 @@
 {
   "database_id": "326dca11d7138002a16bd98e9a91ad63",
-  "csv_path": "input.csv",
+  "csv_path": "notion_import.csv",
   "dedupe_property": "题号",
   "notion_version": "2022-06-28",
   "field_ids": {
@@ -57,6 +57,77 @@
     "status_done": "已做",
     "status_todo": "待做",
     "breakthrough": "自动导入：来自本地代码文件"
+  },
+  "luogu_pending_plan": {
+    "enabled": true,
+    "start": 105,
+    "end": 200,
+    "title_prefix": "洛谷计划",
+    "title_format": "{0}-{1:D3}",
+    "status": "待做",
+    "pending_tag": "未完成|洛谷计划题",
+    "next_review_offset_days": 1,
+    "default_type": "基础算法",
+    "default_difficulty": "中等",
+    "default_breakthrough": "先做题型判断，再确定复杂度上界与模板",
+    "stages": [
+      {
+        "from": 105,
+        "to": 120,
+        "type": "排序与模拟",
+        "difficulty": "简单",
+        "breakthrough": "先用模拟/排序稳过样例，再考虑优化"
+      },
+      {
+        "from": 121,
+        "to": 136,
+        "type": "前缀和与差分",
+        "difficulty": "简单",
+        "breakthrough": "先判断是否可转前缀和/差分，避免暴力"
+      },
+      {
+        "from": 137,
+        "to": 152,
+        "type": "数据结构-并查集",
+        "difficulty": "中等",
+        "breakthrough": "先识别连通性与合并操作，优先 DSU"
+      },
+      {
+        "from": 153,
+        "to": 168,
+        "type": "数据结构-线段树",
+        "difficulty": "中等",
+        "breakthrough": "区间更新+查询并存时优先线段树"
+      },
+      {
+        "from": 169,
+        "to": 184,
+        "type": "DP-背包",
+        "difficulty": "中等",
+        "breakthrough": "先写状态定义与转移方程，再做滚动优化"
+      },
+      {
+        "from": 185,
+        "to": 192,
+        "type": "图论-最短路",
+        "difficulty": "中等",
+        "breakthrough": "先判边权性质，再选 Dijkstra/SPFA/Floyd"
+      },
+      {
+        "from": 193,
+        "to": 196,
+        "type": "树-LCA",
+        "difficulty": "中等",
+        "breakthrough": "多次祖先查询优先倍增 LCA"
+      },
+      {
+        "from": 197,
+        "to": 200,
+        "type": "数论-快速幂",
+        "difficulty": "中等",
+        "breakthrough": "含幂取模/逆元时优先快速幂与同余"
+      }
+    ]
   },
   "auto_type_breakthrough_map": {
     "DP": "看到最优子结构和状态转移时优先考虑 DP",
@@ -131,7 +202,15 @@
       "type": "数据结构-单调结构"
     },
     {
+      "pattern": "单调栈|单调队列",
+      "type": "数据结构-单调结构"
+    },
+    {
       "pattern": "priority_queue|\\bheap\\b",
+      "type": "数据结构-堆"
+    },
+    {
+      "pattern": "堆|优先队列",
       "type": "数据结构-堆"
     },
     {
@@ -140,6 +219,10 @@
     },
     {
       "pattern": "templates/trie|\\btrie\\b",
+      "type": "字符串-Trie"
+    },
+    {
+      "pattern": "字典树",
       "type": "字符串-Trie"
     },
     {
@@ -159,6 +242,10 @@
       "type": "树-LCA"
     },
     {
+      "pattern": "最近公共祖先",
+      "type": "树-LCA"
+    },
+    {
       "pattern": "tree\\s*dp|subtree",
       "type": "树-树形DP"
     },
@@ -167,11 +254,23 @@
       "type": "双指针/滑动窗口"
     },
     {
+      "pattern": "双指针|滑动窗口",
+      "type": "双指针/滑动窗口"
+    },
+    {
       "pattern": "prefix\\s*sum|difference\\s*array",
       "type": "前缀和与差分"
     },
     {
+      "pattern": "前缀和|差分",
+      "type": "前缀和与差分"
+    },
+    {
       "pattern": "sort\\s*\\(|simulation|simulate",
+      "type": "排序与模拟"
+    },
+    {
+      "pattern": "排序|模拟|枚举",
       "type": "排序与模拟"
     }
   ],

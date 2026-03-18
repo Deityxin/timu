@@ -33,7 +33,8 @@ function Invoke-NotionApi {
         [string]$Url,
         [hashtable]$Headers,
         [object]$Body = $null,
-        [int]$RetryCount = 4
+        [int]$RetryCount = 5,
+        [string]$Operation = ""
     )
 
     $attempt = 0
@@ -49,15 +50,65 @@ function Invoke-NotionApi {
         catch {
             $attempt++
             $response = $_.Exception.Response
-            if ($attempt -le $RetryCount) {
-                if ($response -and $response.StatusCode -eq 429) {
-                    Start-Sleep -Seconds 2
-                    continue
+
+            $statusCode = 0
+            if ($response -and $response.StatusCode) {
+                $statusCode = [int]$response.StatusCode
+            }
+
+            $retryAfterSeconds = 0
+            if ($response -and $response.Headers) {
+                $retryAfterRaw = [string]$response.Headers["Retry-After"]
+                if (-not [string]::IsNullOrWhiteSpace($retryAfterRaw)) {
+                    [void][int]::TryParse($retryAfterRaw, [ref]$retryAfterSeconds)
                 }
-                Start-Sleep -Milliseconds (500 * $attempt)
+            }
+
+            $messageText = [string]$_.Exception.Message
+            if ($_.ErrorDetails -and -not [string]::IsNullOrWhiteSpace($_.ErrorDetails.Message)) {
+                $messageText = [string]$_.ErrorDetails.Message
+            }
+            if ($null -eq $messageText) {
+                $messageText = ""
+            }
+            if ($messageText.Length -gt 600) {
+                $messageText = $messageText.Substring(0, 600) + "..."
+            }
+
+            $isTransientStatus = $statusCode -in @(408, 409, 425, 429, 500, 502, 503, 504)
+            $isTransientMessage = $messageText -match "timed out|timeout|temporarily|remote host|forcibly closed|connection reset|ssl connection could not be established|ssl handshake|强迫关闭|连接被重置|无法连接|name resolution"
+
+            if (($isTransientStatus -or $isTransientMessage) -and $attempt -le $RetryCount) {
+                $baseDelay = [Math]::Min(30, [int][Math]::Pow(2, [Math]::Min($attempt, 5)))
+                $jitter = Get-Random -Minimum 0 -Maximum 1000
+                $sleepSeconds = [Math]::Min(30, $baseDelay + [int][Math]::Floor($jitter / 400.0))
+                if ($statusCode -eq 429 -and $retryAfterSeconds -gt 0) {
+                    $sleepSeconds = [Math]::Min(60, [Math]::Max(1, $retryAfterSeconds))
+                }
+
+                $opText = if ([string]::IsNullOrWhiteSpace($Operation)) { "notion_api" } else { $Operation }
+                Write-Host "[RETRY][$opText] $Method status=$statusCode attempt=$attempt/$RetryCount wait=${sleepSeconds}s" -ForegroundColor Yellow
+                Start-Sleep -Seconds $sleepSeconds
                 continue
             }
-            throw
+
+            $errorType = "NON_RETRYABLE"
+            switch ($statusCode) {
+                401 { $errorType = "AUTH" }
+                403 { $errorType = "PERMISSION" }
+                404 { $errorType = "NOT_FOUND" }
+                400 { $errorType = "VALIDATION" }
+                422 { $errorType = "VALIDATION" }
+                429 { $errorType = "RATE_LIMIT" }
+                default {
+                    if ($isTransientStatus -or $isTransientMessage) {
+                        $errorType = "TRANSIENT_EXHAUSTED"
+                    }
+                }
+            }
+
+            $opText = if ([string]::IsNullOrWhiteSpace($Operation)) { "notion_api" } else { $Operation }
+            throw "[$errorType][$opText] $Method $Url failed (status=$statusCode): $messageText"
         }
     }
 }
@@ -68,7 +119,7 @@ function Get-DatabaseSchema {
         [hashtable]$Headers
     )
 
-    $result = Invoke-NotionApi -Method "GET" -Url "https://api.notion.com/v1/databases/$DatabaseId" -Headers $Headers
+    $result = Invoke-NotionApi -Method "GET" -Url "https://api.notion.com/v1/databases/$DatabaseId" -Headers $Headers -Operation "fetch_schema"
     $map = @{}
     foreach ($property in $result.properties.PSObject.Properties) {
         $map[$property.Name] = @{
@@ -91,9 +142,9 @@ function Set-AllPagesArchived {
         $body = @{ page_size = 100 }
         if ($cursor) { $body.start_cursor = $cursor }
 
-        $query = Invoke-NotionApi -Method "POST" -Url "https://api.notion.com/v1/databases/$DatabaseId/query" -Headers $Headers -Body $body
+        $query = Invoke-NotionApi -Method "POST" -Url "https://api.notion.com/v1/databases/$DatabaseId/query" -Headers $Headers -Body $body -Operation "query_all"
         foreach ($page in $query.results) {
-            Invoke-NotionApi -Method "PATCH" -Url "https://api.notion.com/v1/pages/$($page.id)" -Headers $Headers -Body @{ archived = $true } | Out-Null
+            Invoke-NotionApi -Method "PATCH" -Url "https://api.notion.com/v1/pages/$($page.id)" -Headers $Headers -Body @{ archived = $true } -Operation "archive_page" | Out-Null
             $archived++
             Start-Sleep -Milliseconds 120
         }
@@ -215,7 +266,7 @@ foreach ($row in $rows) {
         properties = $properties
     }
 
-    Invoke-NotionApi -Method "POST" -Url "https://api.notion.com/v1/pages" -Headers $headers -Body $body | Out-Null
+    Invoke-NotionApi -Method "POST" -Url "https://api.notion.com/v1/pages" -Headers $headers -Body $body -Operation "create_page" | Out-Null
     $created++
     Write-Host "[CREATED] $titleValue"
     Start-Sleep -Milliseconds 120

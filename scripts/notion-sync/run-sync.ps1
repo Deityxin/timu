@@ -46,6 +46,14 @@ else {
     return
 }
 
+Write-Host "Refreshing CSV from source files..." -ForegroundColor Cyan
+& "$PSScriptRoot\generate_import_csv.ps1"
+if (-not $?) {
+    Write-Host "CSV generation failed." -ForegroundColor Red
+    $global:LASTEXITCODE = 1
+    return
+}
+
 $args = @("sync_to_notion.py", "--config", "config.json")
 if ($DryRun) {
     $args += "--dry-run"
