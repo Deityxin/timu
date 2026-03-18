@@ -8,6 +8,7 @@
 - Snippets: in a new file type `cp` and press Enter for the main skeleton; type `inc-temp` to drop in common template includes.
 - Path assumptions: headers are found via the repo root include path (`-I d:\timu`); keep source files inside the repo so includes like `"templates/segment_tree.hpp"` resolve without extra flags.
 - OS/shell: environment is Windows + PowerShell; prefer PowerShell-friendly examples (no `&&`, use `;` or separate lines).
+- Teaching preference for this workspace: when the user asks why/how, says they do not understand, or asks for an explanation, explain in plain Chinese step by step. State what each key line or block does, why it is written that way, the underlying intuition, and common mistakes. Do not skip the reasoning chain.
 - Profiles: optional VS Code profiles live in `profiles/` (`exam.code-profile`, `normal.code-profile`) if you need to import them via `Profiles: Import Profile...`.
 - Troubleshooting scripts: if `toggle-exam` is blocked, see `scripts/README-执行策略与签名.md` for execution policy and signing steps; markers and notices live under `.vscode/`.
 - Keep outputs simple (stdout only) and avoid relying on non-ASCII unless a problem requires it; default to fast IO already enabled in `common.hpp`.
