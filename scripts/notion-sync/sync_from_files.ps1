@@ -433,7 +433,11 @@ foreach ($record in $records) {
             Write-Host "[SKIPPED] $key"
         }
         else {
-            Invoke-NotionApi -Method "POST" -Url "https://api.notion.com/v1/pages" -Headers $headers -Body @{ parent = @{ database_id = $databaseId }; properties = $properties } -Operation "create_page" | Out-Null
+            $createdResult = Invoke-NotionApi -Method "POST" -Url "https://api.notion.com/v1/pages" -Headers $headers -Body @{ parent = @{ database_id = $databaseId }; properties = $properties } -Operation "create_page"
+            $newPageId = [string](Get-ObjectValue -Object $createdResult -Name "id" -Default "")
+            if (-not [string]::IsNullOrWhiteSpace($newPageId)) {
+                $existingMap[$key] = $newPageId
+            }
             $created++
             Write-Host "[CREATED] $key"
             Start-Sleep -Milliseconds 120

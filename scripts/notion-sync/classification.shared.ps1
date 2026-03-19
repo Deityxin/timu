@@ -389,8 +389,8 @@ function Get-NotionSyncLuoguTitleMap {
     $changed = $false
 
     $uniqueProblemIds = @($ProblemIds | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | ForEach-Object { $_.Trim().ToUpperInvariant() } | Where-Object { $_ -match '^P\d{4}$' } | Select-Object -Unique)
-    foreach ($pid in $uniqueProblemIds) {
-        if ($cache.ContainsKey($pid) -and -not [string]::IsNullOrWhiteSpace([string]$cache[$pid])) {
+    foreach ($problemCode in $uniqueProblemIds) {
+        if ($cache.ContainsKey($problemCode) -and -not [string]::IsNullOrWhiteSpace([string]$cache[$problemCode])) {
             continue
         }
 
@@ -398,9 +398,9 @@ function Get-NotionSyncLuoguTitleMap {
             continue
         }
 
-        $title = Get-NotionSyncLuoguTitleByProblemId -ProblemId $pid
+        $title = Get-NotionSyncLuoguTitleByProblemId -ProblemId $problemCode
         if (-not [string]::IsNullOrWhiteSpace($title)) {
-            $cache[$pid] = [string]$title
+            $cache[$problemCode] = [string]$title
             $changed = $true
         }
     }
