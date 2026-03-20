@@ -27,7 +27,6 @@ void magic(vector<vector<int>>& dig, const vector<vector<int>>& dig1, int m){
         }
     }
 }
-
 int main(){
     int n , m;
     cin >> n >> m;
