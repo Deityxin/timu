@@ -25,7 +25,6 @@ int main(){
         if(k <= j) r = j;
         else l = j + 1;
     }
-
     cout << shu[k];
     return 0;
 }

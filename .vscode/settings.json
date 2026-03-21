@@ -11,33 +11,9 @@
   "editor.parameterHints.enabled": false,
   "editor.snippetSuggestions": "none",
   "editor.hover.enabled": "off",
-  // 关闭 C/C++ 扩展自动补全，但保留语义着色
+  // 关闭 C/C++ 扩展联想与智能提示（如安装微软 C/C++ 扩展）
   "C_Cpp.autocomplete": "Disabled",
-  "C_Cpp.intelliSenseEngine": "Default",
-  "C_Cpp.errorSquiggles": "Disabled",
-  "C_Cpp.formatting": "Disabled",
-  "C_Cpp.intelliSenseEngineFallback": "Enabled",
+  "C_Cpp.intelliSenseEngine": "Disabled",
   "editor.bracketPairColorization.enabled": true,
-  "editor.guides.bracketPairs": true,
-  "files.associations": {
-    "*.cpp": "cpp",
-    "*.hpp": "cpp",
-    "*.h": "cpp"
-  },
-  "editor.semanticHighlighting.enabled": true
-  ,
-  "workbench.colorTheme": "Default Dark+",
-  "editor.tokenColorCustomizations": {
-    "textMateRules": [
-      { "scope": ["support.type", "entity.name.type", "storage.type"], "settings": { "foreground": "#4FC1FF", "fontStyle": "" } },
-      { "scope": ["variable.other.readwrite"], "settings": { "foreground": "#E1E1E1" } }
-    ]
-  }
-  ,
-  // 语义高亮开启，仍禁用补全
-  "C_Cpp.intelliSenseEngine": "Default",
-  "[markdown]": {
-    "editor.insertSpaces": true,
-    "editor.tabSize": 2
-  }
+  "editor.guides.bracketPairs": true
 }
