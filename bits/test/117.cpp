@@ -22,6 +22,7 @@ int main(){
         }
     }
     vector<int> fin1;
+    if(fin[0] != '0' && fin[0] == fin[1]) cout << 0 << ' ';
     for(int i = 0; i < n * n - 1 ; i++){
         if(fin[i] == fin[i + 1]) ans++;
         else{
@@ -29,6 +30,7 @@ int main(){
             ans = 1;
         }
     }
+    cout << ans;
     return 0;
 }
     
