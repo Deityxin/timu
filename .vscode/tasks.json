@@ -21,8 +21,28 @@
 			},
 			"group": {
 				"kind": "build",
-				"isDefault": true
+				"isDefault": false
 			}
+		},
+		{
+			"label": "C++: Linux Run",
+			"type": "shell",
+			"command": "g++ -std=gnu++17 -O2 -Wall -Wextra -I \"${workspaceFolder}\" \"${file}\" -o \"${fileBasenameNoExtension}\" && \"./${fileBasenameNoExtension}\"",
+			"options": {
+				"cwd": "${fileDirname}"
+			},
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"presentation": {
+				"reveal": "always",
+				"focus": true,
+				"panel": "shared"
+			},
+			"problemMatcher": [
+				"$gcc"
+			]
 		},
 		{
 			"label": "C++: Run Current File",

@@ -1,0 +1,23 @@
+#!/bin/bash
+if [ -z "$1" ]; then
+    echo "Usage: cprun <cpp_file>"
+    exit 1
+fi
+
+# Ensure we have the absolute path to the file
+FILE=$(realpath "$1")
+DIR=$(dirname "$FILE")
+BASENAME=$(basename "$FILE" .cpp)
+OUT="$DIR/$BASENAME"
+REPO_ROOT="/mnt/d/timu"  # Hardcoded based on your workspace
+
+echo "Compiling $1..."
+g++ -std=gnu++17 -O2 -Wall -Wextra -I "$REPO_ROOT" "$FILE" -o "$OUT"
+
+if [ $? -eq 0 ]; then
+    echo "Running..."
+    "$OUT"
+else
+    echo "Compilation failed."
+    exit 1
+fi

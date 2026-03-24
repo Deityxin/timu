@@ -52,5 +52,11 @@
     "command": "workbench.action.tasks.runTask",
     "args": "一键: 正常模式",
     "when": "true"
+  },
+  {
+    "key": "ctrl+alt+r",
+    "command": "workbench.action.tasks.runTask",
+    "args": "C++: Linux Run",
+    "when": "editorTextFocus"
   }
 ]
