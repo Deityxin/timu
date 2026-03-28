@@ -9,6 +9,12 @@
   "editor.hover.enabled": true,
   "C_Cpp.autocomplete": "Default",
   "C_Cpp.intelliSenseEngine": "Default",
+  "editor.semanticHighlighting.enabled": true,
   "editor.bracketPairColorization.enabled": true,
-  "editor.guides.bracketPairs": true
+  "editor.guides.bracketPairs": true,
+  "files.associations": {
+    "*.cpp": "cpp",
+    "*.hpp": "cpp",
+    "*.h": "cpp"
+  }
 }

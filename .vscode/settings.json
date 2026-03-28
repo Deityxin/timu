@@ -13,7 +13,14 @@
   "editor.hover.enabled": "off",
   // 关闭 C/C++ 扩展联想与智能提示（如安装微软 C/C++ 扩展）
   "C_Cpp.autocomplete": "Disabled",
-  "C_Cpp.intelliSenseEngine": "Disabled",
+  "C_Cpp.intelliSenseEngine": "Default",
+  "C_Cpp.errorSquiggles": "Disabled",
+  "editor.semanticHighlighting.enabled": true,
   "editor.bracketPairColorization.enabled": true,
-  "editor.guides.bracketPairs": true
+  "editor.guides.bracketPairs": true,
+  "files.associations": {
+    "*.cpp": "cpp",
+    "*.hpp": "cpp",
+    "*.h": "cpp"
+  }
 }
