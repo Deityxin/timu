@@ -14,7 +14,7 @@ int main() {
         if (pos != i) swap(a[i], a[pos]);
     }
     for (int i = 0; i < n; ++i) {
-        if (i) cout << ' ';
+        if cout << ' ';
         cout << a[i];
     }
     cout << endl;
