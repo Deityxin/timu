@@ -1,21 +1,26 @@
- #include <iostream>
- #include <vector>
- using namespace std;
- template <typename T>
- void xuan(vector<T> &tem) {
-   for (int i = 0; i + 1 < tem.size(); ++i) {
-      int pos = i;
-      for (int j = i + 1; j < tem.size(); ++j) {
-         if (tem[j] < tem[pos]) pos = j;
-      }
-      if (pos != i) swap(tem[i], tem[pos]);
-   }
- }
- int main() {
-   vector<int> tem;
-   for (int i = 0 , x; i < 5; ++i){cin >> x; tem.push_back(x);}
-   xuan(tem);
-   for(int a : tem){cout << a << ' ';}
-   cout << '\n';
-   return 0;
- }
+#include <iostream>
+#include <string>
+#include <vector>
+#include <map>
+using namespace std;
+int main() {
+    map<string, vector<string>> families;
+    families["王"].push_back("大锤");
+    families["王"].push_back("二锤");
+    families["李"].push_back("四");
+    families["李"].push_back("白");
+    families["张"].push_back("三");
+    families["赵"].push_back("云");
+    string query = "王";
+    auto it = families.find(query);
+    if (it != families.end()) {
+        cout << query << " 家族的孩子有: ";
+        for (const string& child : it->second) {
+            cout << child << " ";
+        }
+        cout << '\n';
+    } else {
+        cout << "未能找到该家族\n";
+    }
+    return 0;
+}
