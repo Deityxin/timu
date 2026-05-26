@@ -1,0 +1,182 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700">
+  <defs>
+    <style>
+      .bg { fill: #ffffff; }
+      .wire { stroke: #20e020; stroke-width: 3; fill: none; }
+      .chip { fill: #f7fbff; stroke: #8aa0b8; stroke-width: 2; }
+      .chip2 { fill: #f8f8f8; stroke: #b5b5b5; stroke-width: 2; }
+      .label { font-family: Arial, 'Microsoft YaHei', sans-serif; fill: #333; font-size: 16px; }
+      .small { font-size: 12px; }
+      .pin { fill: #6b6b6b; }
+      .on { fill: #f6b21a; stroke: #d79c12; stroke-width: 1.5; }
+      .off { fill: #dfeef8; stroke: #c8dbe8; stroke-width: 1.5; }
+      .switch { fill: #fff; stroke: #9aa7b2; stroke-width: 2; }
+      .bar { fill: #e7ebf7; stroke: #93a0b2; stroke-width: 1.5; }
+      .title { font-family: Arial, 'Microsoft YaHei', sans-serif; font-size: 22px; font-weight: 700; fill: #222; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1200" height="700"/>
+
+  <!-- top lights -->
+  <g transform="translate(650,25)">
+    <circle class="off" cx="0" cy="0" r="11"/>
+    <circle class="off" cx="22" cy="0" r="11"/>
+    <circle class="off" cx="44" cy="0" r="11"/>
+    <circle class="off" cx="66" cy="0" r="11"/>
+    <circle class="off" cx="88" cy="0" r="11"/>
+    <circle class="off" cx="110" cy="0" r="11"/>
+    <circle class="off" cx="132" cy="0" r="11"/>
+    <circle class="off" cx="154" cy="0" r="11"/>
+    <line class="wire" x1="0" y1="12" x2="0" y2="120"/>
+    <line class="wire" x1="22" y1="12" x2="22" y2="120"/>
+    <line class="wire" x1="44" y1="12" x2="44" y2="120"/>
+    <line class="wire" x1="66" y1="12" x2="66" y2="120"/>
+    <line class="wire" x1="88" y1="12" x2="88" y2="120"/>
+    <line class="wire" x1="110" y1="12" x2="110" y2="120"/>
+    <line class="wire" x1="132" y1="12" x2="132" y2="120"/>
+    <line class="wire" x1="154" y1="12" x2="154" y2="120"/>
+  </g>
+
+  <!-- RAM6116 -->
+  <g transform="translate(560,220)">
+    <rect class="chip" rx="10" ry="10" width="290" height="115"/>
+    <text class="label small" x="10" y="18">23 22 21 20</text>
+    <text class="label small" x="10" y="34">VCC A8 A9 A10</text>
+    <text class="title" x="95" y="55">RAM6116</text>
+    <text class="label small" x="150" y="18" fill="#b040ff">19 18 17 16 15 14 13 12</text>
+    <text class="label small" x="150" y="34" fill="#b040ff">I07 I06 I05 I04 I03 I02 I01 I00</text>
+    <text class="label small" x="12" y="86" fill="#0a58c7">A7 A6 A5 A4 A3 A2 A1 A0</text>
+    <text class="label small" x="200" y="86" fill="#0a58c7">-CE -OE -WE GND</text>
+  </g>
+
+  <!-- 74LS273 -->
+  <g transform="translate(430,430)">
+    <rect class="chip" rx="10" ry="10" width="230" height="95"/>
+    <text class="label small" x="10" y="18">19 18 17 16 15 14 13 12 11 10</text>
+    <text class="label small" x="12" y="34">VCC Q7 Q6 Q5 Q4 Q3 Q2 Q1 Q0 CP</text>
+    <text class="title" x="75" y="58">74LS273</text>
+    <text class="label small" x="10" y="79" fill="#0a58c7">-MR D7 D6 D5 D4 D3 D2 D1 D0 GND</text>
+  </g>
+
+  <!-- 74LS245 -->
+  <g transform="translate(110,520)">
+    <rect class="chip" rx="10" ry="10" width="220" height="88"/>
+    <text class="label small" x="10" y="18">19 18 17 16 15 14 13 12 11 10</text>
+    <text class="label small" x="12" y="34">VCC -E B7 B6 B5 B4 B3 B2 B1 B0</text>
+    <text class="title" x="65" y="58">74LS245</text>
+    <text class="label small" x="12" y="79">DIR A7 A6 A5 A4 A3 A2 A1 A0 GND</text>
+  </g>
+
+  <!-- left switch and bus -->
+  <g>
+    <rect class="switch" x="20" y="555" width="16" height="40" rx="2"/>
+    <circle class="pin" cx="28" cy="575" r="4"/>
+    <line class="wire" x1="36" y1="575" x2="110" y2="575"/>
+    <line class="wire" x1="110" y1="575" x2="110" y2="540"/>
+    <line class="wire" x1="110" y1="540" x2="160" y2="540"/>
+  </g>
+
+  <!-- data switches at bottom left -->
+  <g transform="translate(155,670)">
+    <rect class="switch" x="0" y="-25" width="20" height="35"/>
+    <rect class="switch" x="22" y="-25" width="20" height="35"/>
+    <rect class="switch" x="44" y="-25" width="20" height="35"/>
+    <rect class="switch" x="66" y="-25" width="20" height="35"/>
+    <rect class="switch" x="88" y="-25" width="20" height="35"/>
+    <rect class="switch" x="110" y="-25" width="20" height="35"/>
+    <rect class="switch" x="132" y="-25" width="20" height="35"/>
+    <rect class="switch" x="154" y="-25" width="20" height="35"/>
+  </g>
+
+  <!-- wires from 74LS245 to 74LS273 -->
+  <path class="wire" d="M330 558 L390 558 L390 553 L430 553"/>
+  <path class="wire" d="M360 558 L360 505 L430 505"/>
+  <path class="wire" d="M330 558 L330 380 L540 380 L540 340"/>
+  <path class="wire" d="M560 430 L560 375 L750 375 L750 335"/>
+
+  <!-- RAM to top lights -->
+  <path class="wire" d="M800 330 L860 330 L860 260 L960 260"/>
+  <path class="wire" d="M820 330 L920 330 L920 305 L1120 305 L1120 370"/>
+
+  <!-- right lights -->
+  <g transform="translate(1000,340)">
+    <circle class="off" cx="0" cy="0" r="10"/>
+    <circle class="off" cx="22" cy="0" r="10"/>
+    <circle class="off" cx="44" cy="0" r="10"/>
+    <circle class="off" cx="66" cy="0" r="10"/>
+    <circle class="on" cx="88" cy="0" r="10"/>
+    <circle class="off" cx="110" cy="0" r="10"/>
+    <circle class="on" cx="132" cy="0" r="10"/>
+    <circle class="off" cx="154" cy="0" r="10"/>
+    <line class="wire" x1="0" y1="10" x2="0" y2="58"/>
+    <line class="wire" x1="22" y1="10" x2="22" y2="58"/>
+    <line class="wire" x1="44" y1="10" x2="44" y2="58"/>
+    <line class="wire" x1="66" y1="10" x2="66" y2="58"/>
+    <line class="wire" x1="88" y1="10" x2="88" y2="58"/>
+    <line class="wire" x1="110" y1="10" x2="110" y2="58"/>
+    <line class="wire" x1="132" y1="10" x2="132" y2="58"/>
+    <line class="wire" x1="154" y1="10" x2="154" y2="58"/>
+  </g>
+
+  <!-- top row memory state lights above RAM: 00001010 -->
+  <g transform="translate(792,150)">
+    <circle class="off" cx="0" cy="0" r="10"/>
+    <circle class="off" cx="22" cy="0" r="10"/>
+    <circle class="off" cx="44" cy="0" r="10"/>
+    <circle class="off" cx="66" cy="0" r="10"/>
+    <circle class="on" cx="88" cy="0" r="10"/>
+    <circle class="off" cx="110" cy="0" r="10"/>
+    <circle class="on" cx="132" cy="0" r="10"/>
+    <circle class="off" cx="154" cy="0" r="10"/>
+    <line class="wire" x1="0" y1="10" x2="0" y2="95"/>
+    <line class="wire" x1="22" y1="10" x2="22" y2="95"/>
+    <line class="wire" x1="44" y1="10" x2="44" y2="95"/>
+    <line class="wire" x1="66" y1="10" x2="66" y2="95"/>
+    <line class="wire" x1="88" y1="10" x2="88" y2="95"/>
+    <line class="wire" x1="110" y1="10" x2="110" y2="95"/>
+    <line class="wire" x1="132" y1="10" x2="132" y2="95"/>
+    <line class="wire" x1="154" y1="10" x2="154" y2="95"/>
+  </g>
+
+  <!-- control switches and gates -->
+  <rect class="switch" x="910" y="295" width="18" height="40" rx="2"/>
+  <circle class="pin" cx="919" cy="315" r="4"/>
+  <rect class="bar" x="905" y="430" width="44" height="28" rx="2"/>
+  <text class="label" x="921" y="450" text-anchor="middle">&amp;</text>
+  <rect class="switch" x="874" y="510" width="18" height="40" rx="2"/>
+  <rect class="switch" x="944" y="510" width="18" height="40" rx="2"/>
+  <path class="wire" d="M919 470 L919 510"/>
+  <path class="wire" d="M883 510 L905 470"/>
+  <path class="wire" d="M953 510 L928 470"/>
+
+  <rect class="bar" x="695" y="545" width="44" height="28" rx="2"/>
+  <text class="label" x="717" y="565" text-anchor="middle">&amp;</text>
+  <rect class="switch" x="664" y="605" width="18" height="40" rx="2"/>
+  <rect class="switch" x="724" y="615" width="18" height="40" rx="2"/>
+  <path class="wire" d="M717 573 L717 605"/>
+  <path class="wire" d="M673 605 L707 573"/>
+  <path class="wire" d="M733 615 L726 573"/>
+
+  <!-- central switches -->
+  <rect class="switch" x="785" y="470" width="18" height="40" rx="2"/>
+  <rect class="switch" x="675" y="440" width="18" height="40" rx="2"/>
+  <rect class="switch" x="735" y="385" width="18" height="40" rx="2"/>
+
+  <!-- main bus wires -->
+  <path class="wire" d="M330 170 L330 200 L560 200"/>
+  <path class="wire" d="M330 170 L900 170 L900 310"/>
+  <path class="wire" d="M560 260 L560 170 L900 170"/>
+  <path class="wire" d="M560 260 L560 320 L800 320"/>
+  <path class="wire" d="M760 305 L760 375 L785 375 L785 470"/>
+  <path class="wire" d="M680 375 L680 440"/>
+  <path class="wire" d="M720 375 L720 385"/>
+
+  <!-- small decorative connection dots -->
+  <circle class="pin" cx="560" cy="260" r="3"/>
+  <circle class="pin" cx="760" cy="320" r="3"/>
+  <circle class="pin" cx="900" cy="170" r="3"/>
+
+  <text class="label" x="40" y="40">第四图：写入完成后的最终状态示意图</text>
+  <text class="label small" x="40" y="65">RAM6116 保持 00001010，点亮位与前三张图一致</text>
+</svg>
