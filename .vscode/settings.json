@@ -22,5 +22,6 @@
     "*.cpp": "cpp",
     "*.hpp": "cpp",
     "*.h": "cpp"
-  }
+  },
+  "cmake.sourceDirectory": "D:/timu/learning/tensor_project"
 }
